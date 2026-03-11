@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         IMAGE_TAG = "${BUILD_NUMBER}"
-        DOCKERHUB_USER = 'aakkiiff'
+        DOCKERHUB_USER = 'jasonantonacci1'
         FRONTEND_APP = "goals_project_frontend"
         FRONTEND_IMAGE = "${DOCKERHUB_USER}/${FRONTEND_APP}"
         }
@@ -18,7 +18,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/aakkiiff/Goals-project'
+                git branch: 'main', credentialsId: 'github', url: 'git@github.com:jasonantonacci1-ai/Goals-Frontend.git'
             }
         }
 
@@ -59,16 +59,16 @@ pipeline {
 
         stage("PUSH THE CHANGED TAGGED FILE TO GIT MAS"){
             steps{
-                sh 'git config --global user.email jackakif@gmail.com'
-                sh 'git config --global user.name aakkiiff'
+                sh 'git config --global user.email jasonantonacci1@gmail.com'
+                sh 'git config --global user.name jason'
                 sh 'git add ./k8s/client-deployment.yml'
                 sh 'git add ./k8s/server-deployment.yml'
                 sh 'git commit -m "updated tag to ${IMAGE_TAG}"'
 
-                withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'pass', usernameVariable: 'uname')]) {
-                    sh 'git push https://$uname:$pass@github.com/aakkiiff/Goals-project_config.git master'
-                    }
+                withCredentials([sshUserPrivateKey(credentialsId: 'github', keyFileVariable: 'SSH_KEY')]) {
+                    sh 'GIT_SSH_COMMAND="ssh -i $SSH_KEY" git push git@github.com:jasonantonacci1-ai/Goals-Config.git main'
                 }
+            }
         }
             
      }
