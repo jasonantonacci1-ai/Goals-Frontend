@@ -18,7 +18,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: 'main', credentialsId: 'github', url: 'git@github.com:jasonantonacci1-ai/Goals-Frontend.git'
+                git branch: 'main', credentialsId: 'GitHub', url: 'git@github.com:jasonantonacci1-ai/Goals-Frontend.git'
             }
         }
 
@@ -65,7 +65,7 @@ pipeline {
                 sh 'git add ./k8s/server-deployment.yml'
                 sh 'git commit -m "updated tag to ${IMAGE_TAG}"'
 
-                withCredentials([sshUserPrivateKey(credentialsId: 'github', keyFileVariable: 'SSH_KEY')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: 'GitHub', keyFileVariable: 'SSH_KEY')]) {
                     sh 'GIT_SSH_COMMAND="ssh -i $SSH_KEY" git push git@github.com:jasonantonacci1-ai/Goals-Config.git main'
                 }
             }
