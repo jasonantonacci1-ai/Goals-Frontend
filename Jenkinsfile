@@ -55,7 +55,7 @@ pipeline {
                     git branch: 'main', credentialsId: 'GitHub', url: 'https://github.com/jasonantonacci1-ai/Goals-Infrastructure.git'
                     
                     // 2. Update the frontend image tag
-                    sh "sed -i 's/image: .*/image: ${FRONTEND_IMAGE}:${IMAGE_TAG}/g' client-deployment.yml"
+                    sh "sed -i 's|image: .*|image: ${FRONTEND_IMAGE}:${IMAGE_TAG}|g' client-deployment.yml"
                     
                     // Let's print it out to verify it worked in the logs
                     sh "cat client-deployment.yml"
