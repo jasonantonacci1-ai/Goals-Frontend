@@ -54,20 +54,17 @@ pipeline {
                     // 1. Pull the infrastructure code
                     git branch: 'main', credentialsId: 'GitHub', url: 'https://github.com/jasonantonacci1-ai/Goals-Infrastructure.git'
                     
-                    // 2. View and Update the files (no ./k8s/ folder needed)
-                    sh "cat client-deployment.yml"
-                    sh "sed -i 's/${FRONTEND_APP}.*/${FRONTEND_APP}:${IMAGE_TAG}/g' client-deployment.yml"
-                    sh "cat client-deployment.yml"
-                    sh "cat server-deployment.yml"
-
-                    // 3. Commit the changes
-                    sh 'git config --global user.email "jasonantonacci1@gmail.com"'
-                    sh 'git config --global user.name "jason"'
-                    sh 'git add client-deployment.yml'
-                    sh 'git add server-deployment.yml'
+                    // 2. Update the frontend image tag
+                    sh "sed -i 's/image: .*/image: ${FRONTEND_IMAGE}:${IMAGE_TAG}/g' client-deployment.yml"
                     
-                    // Notice the double quotes here!
-                    sh "git commit -m 'updated tag to ${IMAGE_TAG}'"
+                    // Let's print it out to verify it worked in the logs
+                    sh "cat client-deployment.yml"
+
+                    // 3. Commit the changes (only the client file!)
+                    sh 'git config --global user.email "jasonantonacci1@gmail.com"'
+                    sh 'git config --global user.name "Jason"'
+                    sh 'git add client-deployment.yml'
+                    sh "git commit -m 'updated frontend tag to ${IMAGE_TAG}'"
 
                     // 4. Push back to the Infrastructure repo
                     withCredentials([sshUserPrivateKey(credentialsId: 'GitHub', keyFileVariable: 'SSH_KEY')]) {
@@ -76,5 +73,3 @@ pipeline {
                 }
             }
         }
-    }
-}
